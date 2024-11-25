@@ -5,7 +5,7 @@ import orderSchema from "../middlewares/validation/schema/userSchema.js";
 
 const router = express.Router();
 
-router.post("/signUp",validateRequest(orderSchema), signUp);
+router.post("/signUp", validateRequest(orderSchema), signUp);
 router.get("/signIn", signIn);
 
 export default router;
