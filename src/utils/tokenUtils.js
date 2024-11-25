@@ -11,3 +11,9 @@ export const generateRefreshToken = (userId) => {
     expiresIn: "7d",
   });
 };
+
+export const generateEmailToken = (userId) => {
+  return jwt.sign({ id: userId }, process.env.EMAIL_TOKEN_SECRET, {
+    expiresIn: "1d",
+  });
+};
