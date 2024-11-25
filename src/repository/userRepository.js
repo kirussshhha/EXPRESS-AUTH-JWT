@@ -11,6 +11,6 @@ export const create = async ({ nickname, password, email, isVerify }) => {
   return await user.save();
 };
 
-export const findByEmail = async ({ email }) => {
-  return await userModel.findOne({ email });
+export const findOne = async (data) => {
+  return await userModel.findOne(data);
 };

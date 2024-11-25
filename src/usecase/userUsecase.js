@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
-import { create, findByEmail } from "../repository/userRepository.js";
+import jwt from "jsonwebtoken";
+import { create, findOne } from "../repository/userRepository.js";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -29,7 +30,7 @@ export const createUser = async ({ nickname, email, password, isVerify }) => {
 
 export const findUser = async ({ email, password }) => {
   try {
-    const user = await findByEmail({ email });
+    const user = await findOne({ email });
     if (!user) {
       throw new Error("Пользователь не найден");
     }
@@ -51,5 +52,28 @@ export const findUser = async ({ email, password }) => {
     };
   } catch (err) {
     throw new Error("Ошибка при входе в аккаунт");
+  }
+};
+
+export const updateToken = async ({ refreshToken }) => {
+  const user = await findOne({ refreshToken });
+  if (!user) {
+    throw new Error("Пользователь не найден");
+  }
+
+  try {
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const accessToken = generateAccessToken(user._id);
+    const setRefreshToken = generateRefreshToken(user._id);
+
+    user.refreshToken = setRefreshToken;
+    await user.save();
+
+    return {
+      user,
+      accessToken,
+    };
+  } catch (err) {
+    throw new Error("Токен не действителен");
   }
 };
